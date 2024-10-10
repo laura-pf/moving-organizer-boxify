@@ -1,0 +1,64 @@
+@import "../core/variables.scss";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  //quito estilos de link volver por el menu header sticky, me gusta mas en el centro tambien
+
+  // &-link {
+  //   margin-top: 15px;
+  //   display: block;
+  //   margin-left: 20px;
+  // }
+}
+.info {
+  color: gray;
+  display: flex;
+  flex-direction: column;
+  // justify-content: center;
+
+  gap: 20px;
+  // margin-top: 60px;
+  // max-width: 350px;
+
+  // border: 3px, solid, $color-tittle;
+  padding: 0 20px;
+  animation: fadeIn 0.5s ease;
+  &__tittle {
+    font-family: $body;
+    color: $color-tittle;
+    font-size: 20px;
+    text-align: center;
+    @media screen and (min-width: 768px) {
+      font-size: 30px;
+    }
+  }
+  &__text {
+    font-family: $body;
+    font-weight: 500;
+    @media screen and (min-width: 768px) {
+      font-size: 20px;
+    }
+  }
+}
+
+.instruction {
+  margin-top: 10px;
+}
+.background {
+  width: 100%;
+  height: 250px;
+  background-image: url("../../images/mudanza.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: fadeIn 0.5s ease;
+  @media screen and (min-width: 768px) {
+    height: 400px;
+  }
+  @media screen and (min-width: 1024px) {
+    height: 480px;
+  }
+}

@@ -1,0 +1,35 @@
+@import "../core/reset";
+@import "../core/variables";
+
+.remove-box {
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 30px;
+
+  &__yesno {
+    width: 60px;
+    padding: 0;
+    cursor: pointer;
+    padding: 8px;
+
+    &-no {
+      width: 60px;
+      padding: 0;
+      background-color: gray;
+      cursor: pointer;
+    }
+  }
+}
+.question-remove {
+  text-align: center;
+}
+
+.removep {
+  font-size: small;
+  margin-bottom: 25px;
+}

@@ -1,0 +1,53 @@
+@import "../core/variables.scss";
+
+.filter {
+  background-image: url("../images/mudanza3.jpg");
+  background-position: center;
+  background-size: auto;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+
+  margin-top: 98px; //lo pongo por el header sticky
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: flex-start;
+    gap: 10px;
+    margin: 150px;
+    padding: 20px;
+    background-color: rgba(152, 240, 252, 0.507);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.541);
+    border-radius: 5px;
+    min-width: 350px;
+    flex-grow: 1;
+  }
+}
+
+.label {
+  color: $color-tittle;
+  font-family: $body;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.input {
+  padding: 5px;
+  border-radius: 5px;
+  border: 2px solid $pastel-pink;
+  color: $color-tittle;
+  font-family: $body;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.input:focus {
+  border-color: $color-tittle;
+  outline: none;
+}
+.filters {
+  color: rgb(75, 74, 74);
+}

@@ -1,0 +1,125 @@
+@import "../core/variables.scss";
+
+.containbox {
+  display: flex;
+  flex-direction: column;
+  margin: 120px 20px;
+  background-image: url("../../images/cajas.jpg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center 30px;
+
+  &__tittle {
+    font-family: $body;
+    font-size: 30px;
+    color: rgb(59, 59, 59);
+    margin-bottom: 30px;
+    margin-top: 40px;
+    text-align: center;
+    padding: 10px 0;
+    background-color: rgba(152, 240, 252, 0.507);
+    border-radius: 10px;
+    @media screen and (min-width: 600px) {
+      margin-top: 100px;
+    }
+    @media screen and (min-width: 1024px) {
+      margin-top: 300px;
+      padding: 30px 0;
+    }
+  }
+  &__back {
+    font-family: $body;
+    color: $color-tittle;
+    font-weight: 700;
+    align-self: center;
+    margin-bottom: 30px;
+    text-decoration: underline;
+  }
+}
+
+.formAddObject {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &__tittle {
+    font-family: $body;
+    color: $color-tittle;
+    font-weight: 900;
+  }
+  &__inputButton {
+    display: flex;
+    gap: 50px;
+    &-inputObject {
+      flex-grow: 1;
+      font-family: $body;
+      font-size: 15px;
+
+      padding: 3px;
+      border: 2px $color-tittle solid;
+      color: $color-tittle;
+    }
+    &-button {
+      background-color: $color-tittle;
+      border: none;
+      padding: 2px 5px;
+      color: white;
+      font-family: $body;
+      font-size: 17px;
+      cursor: pointer;
+    }
+  }
+}
+
+.formAddObject__inputButton-inputObject:focus {
+  border-color: $color-tittle;
+  outline: none;
+}
+
+.object-list {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: $body;
+    color: $color-tittle;
+    font-weight: 600;
+  }
+}
+
+.check {
+  margin-right: 10px;
+}
+
+.button-save-box {
+  background-color: $color-tittle;
+  border: none;
+  padding: 2px 5px;
+  color: white;
+  font-family: $body;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.item-close {
+  margin: 0;
+  padding: 1px 2px;
+}
+
+.image-list {
+  margin-bottom: 0px;
+}
+
+.item-list {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+  &__image {
+    width: 25px;
+  }
+}

@@ -1,0 +1,49 @@
+@import "../core/variables.scss";
+
+.container-box {
+  border: 3px dashed $pastel-pink;
+  max-width: 300px;
+  min-width: 300px;
+  max-height: 200px;
+  min-height: 200px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 5px;
+
+  margin: 20px;
+  cursor: pointer;
+  overflow: hidden;
+  @media screen and (min-width: 1200px) {
+    margin: 0 35px;
+  }
+
+  //fix
+
+  &__tittle {
+    margin: 0 auto;
+    margin-bottom: 10px;
+    font-family: $body;
+    color: $color-tittle;
+    font-size: 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  &__link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.box {
+  border-radius: 5px;
+  border: none;
+  box-shadow: 0 15px 20px rgba(236, 25, 106, 0.274);
+  animation: fadeIn 0.5s ease;
+}

@@ -1,0 +1,49 @@
+@import "../core/variables.scss";
+
+.header {
+  padding: 20px;
+  background-color: $pastel-pink;
+  position: fixed;
+  z-index: 3;
+  width: 100%;
+  top: 0;
+  &__nav {
+    display: flex;
+    justify-content: space-between;
+
+    &-list {
+      display: none;
+      @media screen and (min-width: 1024px) {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+      }
+    }
+  }
+}
+
+.img-link {
+  width: 80px;
+}
+
+.nav-list-item {
+  font-family: $body;
+  font-size: 12px;
+  font-weight: bold;
+  color: $color-tittle;
+  @media screen and (min-width: 1024px) {
+    font-size: 15px;
+  }
+}
+
+.menu-button {
+  width: 40px;
+  background-image: url("../../images/menu-hamburgesa.png");
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  cursor: pointer;
+  @media screen and (min-width: 1024px) {
+    display: none;
+  }
+}
