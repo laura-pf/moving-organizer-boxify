@@ -59,18 +59,6 @@ server.get("/boxs", async (req, res) => {
   }
 });
 
-//POST: CAJAS
-
-server.post("/add-box", async (req, res) => {
-  /*
-        - recoger las cajas que me envía frontend (body params)
-        - abro conexión
-        - consulta CREATE (INSERT INTO)
-        - cierro conexión
-        - respondo
-    */
-});
-
 //REGISTRO:
 
 /*
@@ -264,12 +252,12 @@ async function authorize(req, res, next) {
       message: "Error en autenticación",
     });
   }
+  const connection = await getDBConnection();
 
   try {
     const token = tokenBearer.split(" ")[1]; // dividimos el token (string) en un array y extraemos la parte que necesitamos
     const tokenInfo = jwt.verify(token, process.env.DB_PASSWORD); // Verificamos el token con la clave
 
-    const connection = await getDBConnection();
     const query = "SELECT * FROM users WHERE email = ?";
     const [emailResult] = await connection.query(query, [tokenInfo.email]);
 
@@ -296,7 +284,7 @@ async function authorize(req, res, next) {
   }
 }
 
-server.get("/profileUser", authorize, async (req, res) => {
+server.get("/profile-user", authorize, async (req, res) => {
   res.json({
     success: true,
     user: req.user,
@@ -304,3 +292,198 @@ server.get("/profileUser", authorize, async (req, res) => {
 });
 
 //ENDPOINT AÑADIR CAJAS (SEGUN EL LOGIN DE USUARIO)
+
+/*Añadir cajas:
+-recoger las cajas que envia front de body params
+-Conectar a la base de datos
+-consulta create (insert into)
+-cierro conexion
+-respondo
+*/
+
+server.post("/add-box", authorize, async (req, res) => {
+  const { tittle } = req.body;
+
+  if (!tittle) {
+    return res.status(400).json({
+      success: false,
+      message: "El título es obligatorio",
+    });
+  }
+
+  //la función authorize añade el usuario autenticado a req.user
+
+  const userId = req.user.id;
+
+  const connection = await getDBConnection();
+
+  try {
+    const query =
+      "INSERT INTO Box (tittle, objects, fk_user_id) VALUES (?, ?, ?)";
+    const defaultObjects = []; //pongo un array vacio porque de momento no metemos objetos
+    const [result] = await connection.query(query, [
+      tittle,
+      JSON.stringify(defaultObjects),
+      userId,
+    ]);
+
+    console.log(result);
+
+    res.status(201).json({
+      success: true,
+      message: "Caja añadida",
+      boxId: result.insertId,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error al añadir caja. Inténtalo de nuevo",
+    });
+  } finally {
+    connection.end();
+  }
+});
+
+//AÑADIR OBJETOS
+
+server.put("/add-objects", authorize, async (req, res) => {
+  //recogemos datos desde el front: necesitamos el id de la caja y los nuevos objetos que se van a añadir
+  const { boxId, objects } = req.body;
+
+  if (!boxId || objects.length === 0 || !Array.isArray(objects)) {
+    return res.status(400).json({
+      success: false,
+      message: "El objeto es obligatorio",
+    });
+  }
+
+  const connection = await getDBConnection();
+
+  try {
+    //consultamos la base de datos para tener los objetos actuales que hay en la caja:
+    const query = "SELECT objects FROM Box WHERE id = ? AND fk_user_id = ?";
+    const [boxResult] = await connection.query(query, [boxId, req.user.id]);
+
+    if (boxResult.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Caja no encontrada",
+      });
+    }
+
+    // Recuperamos los objetos actuales y los parseamos de json a un array
+    const currentObjects = boxResult[0].objects;
+
+    //combinamos los objetos actuales con los nuevos objetos
+    const updatedObjects = [...currentObjects, ...objects];
+
+    //añadimos a la bd de datos los nuevos objetos
+    const updateQuery = "UPDATE Box SET objects = ? WHERE id = ?";
+    const [updateResult] = await connection.query(updateQuery, [
+      JSON.stringify(updatedObjects),
+      boxId,
+    ]);
+
+    console.log("updateResult:", updateResult);
+    res.status(200).json({
+      success: true,
+      message: "Objeto añadido con exito",
+    });
+  } catch (error) {
+    console.error("Error al actualizar los objetos:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al añadir objetos, intentalo de nuevo",
+    });
+  } finally {
+    connection.end();
+  }
+});
+
+//ELIMINAR CAJA
+
+server.delete("/delete-box/:id", authorize, async (req, res) => {
+  //recogemos la ruta del id de la caja
+  const id = req.params.id;
+
+  const connection = await getDBConnection();
+  try {
+    //consultamos el id de la tabla caja con su correspondiente user logeado (req.user.id se obtiene de la funcion authorize)
+    const sql = "DELETE FROM Box WHERE id = ? AND fk_user_id = ?";
+    const [deleteBoxResult] = await connection.query(sql, [id, req.user.id]);
+
+    if (deleteBoxResult.affectedRows > 0) {
+      res.status(200).json({
+        status: "true",
+        message: "caja eliminada",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: "false",
+      message: "recurso no eliminado",
+    });
+  } finally {
+    connection.end();
+  }
+});
+
+server.delete("/delete-object", async (req, res) => {
+  //recogemos de front el id de la caja y el index del objeto
+
+  const { boxId, objectIndex } = req.body;
+
+  const connection = await getDBConnection();
+
+  try {
+    //recuperamos los objetos que hay en la caja (req.user.id lo obtenemos de la funcion authorize, a que usuario logeado le pertenece la caja)
+    const query = "SELECT objects FROM Box WHERE id = ?";
+    const [boxResult] = await connection.query(query, [boxId]);
+
+    console.log(boxResult);
+
+    if (boxResult.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Caja no encontrada",
+      });
+    }
+
+    //parseamos los objetos: de json a js para poder hacer modificaciones con ellos
+    const currentObjects = boxResult[0].objects;
+
+    //verificamos si el indice es válido
+
+    if (objectIndex < 0 || objectIndex >= currentObjects.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Índice de objeto no válido",
+      });
+    }
+
+    // eliminamos objeto del array:
+
+    currentObjects.splice(objectIndex, 1);
+
+    //actualizamos los objetos en la base de datos:
+
+    const updateQuery = "UPDATE Box SET objects = ? WHERE id = ?";
+    const [objectResult] = await connection.query(updateQuery, [
+      JSON.stringify(currentObjects),
+      boxId,
+    ]);
+
+    res.status(200).json({
+      success: true,
+      message: "Objeto eliminado con éxito",
+    });
+  } catch (error) {
+    console.error("Error al eliminar el objeto:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al eliminar el objeto, inténtalo de nuevo",
+    });
+  } finally {
+    connection.end();
+  }
+});

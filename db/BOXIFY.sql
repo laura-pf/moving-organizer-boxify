@@ -25,4 +25,22 @@ VALUES
 ALTER TABLE Box
 ADD COLUMN image LONGTEXT AFTER tittle;
 
--- He creado la BD, he añadido una columna a la tabla box, porque no se renderizaba la imagen con el fetch. hay que ponerle el valor fijo de la imagen
+UPDATE Box
+SET objects = '[{"text": "gorro", "checked": false}, {"text": "guantes", "checked": false}, {"text": "bufandas", "checked": false}]'
+WHERE tittle = "caja invierno";
+
+UPDATE Box
+SET objects = '[{"text": "bañadores", "checked": false}, {"text": "toallas", "checked": false}, {"text": "chanclas", "checked": false}]'
+WHERE tittle = "caja verano";
+
+UPDATE Box
+SET objects = '[{"text": "gorro", "checked": false}, {"text": "guantes", "checked": false}, {"text": "bufandas", "checked": false}]'
+WHERE tittle = "caja invierno" AND id = 1;
+
+UPDATE Box
+SET objects = '[{"text": "bañadores", "checked": false}, {"text": "toallas", "checked": false}, {"text": "chanclas", "checked": false}]'
+WHERE tittle = "caja verano" AND id= 2;
+
+ALTER TABLE users MODIFY password VARCHAR(255);
+
+
