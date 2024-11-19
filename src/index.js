@@ -5,7 +5,7 @@ const mysql = require("mysql2/promise");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { use } = require("bcrypt/promises");
-// import cookieParser from "cookie-parser";
+const cookieParser = require("cookie-parser");
 //crear el servidor
 const server = express();
 
@@ -13,7 +13,7 @@ const server = express();
 server.use(express.json({ limit: "25mb" }));
 server.use(cors());
 require("dotenv").config(); // permitimos el uso de variables de entorno, instalar libreria
-// server.use(cookieParser())
+server.use(cookieParser());
 
 //conexión a la bases de datos
 async function getDBConnection() {
@@ -203,30 +203,30 @@ server.post("/login", async (req, res) => {
         const token = jwt.sign(infoToken, process.env.DB_PASSWORD, {
           expiresIn: "1h",
         });
-        res.status(200).json({
-          success: true,
-          token: token,
-        });
+
         //guardamos el token en las cookies.
-        // res.cookie("access_token", token, {
-        //   httpOnly: true, // la cookie solo se puede acceder en el servidor
-        //   secure: true,
-        // })
+        return res
+          .cookie("access_token", token, {
+            httpOnly: true, // la cookie solo se puede acceder en el servidor
+            secure: false,
+            // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
+          })
+          .json({ success: true, user: userResult[0], token: token });
       } else {
-        res.status(401).json({
+        return res.status(401).json({
           success: false,
           message: "Usuario no autenticado. Contraseña incorrecta",
         });
       }
       //si el usuario no se encuentra
     } else {
-      res.status(403).json({
+      return res.status(403).json({
         success: false,
         message: "Usuario no registrado. No se encuentra el email",
       });
     }
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error al iniciar sesión. Inténtalo de nuevo",
     });
@@ -244,9 +244,9 @@ server.post("/login", async (req, res) => {
 */
 
 async function authorize(req, res, next) {
-  const tokenBearer = req.headers.authorization; //recojo token que me manda front
+  const token = req.cookies.access_token;
 
-  if (!tokenBearer) {
+  if (!token) {
     return res.status(401).json({
       success: false,
       message: "Error en autenticación",
@@ -255,7 +255,6 @@ async function authorize(req, res, next) {
   const connection = await getDBConnection();
 
   try {
-    const token = tokenBearer.split(" ")[1]; // dividimos el token (string) en un array y extraemos la parte que necesitamos
     const tokenInfo = jwt.verify(token, process.env.DB_PASSWORD); // Verificamos el token con la clave
 
     const query = "SELECT * FROM users WHERE email = ?";
@@ -327,13 +326,13 @@ server.post("/add-box", authorize, async (req, res) => {
       userId,
     ]);
 
-    console.log(result);
-
-    res.status(201).json({
-      success: true,
-      message: "Caja añadida",
-      boxId: result.insertId,
-    });
+    if (result.affectedRows > 0) {
+      return res.status(201).json({
+        success: true,
+        message: "Caja añadida",
+        boxId: result.insertId,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -415,13 +414,13 @@ server.delete("/delete-box/:id", authorize, async (req, res) => {
     if (deleteBoxResult.affectedRows > 0) {
       res.status(200).json({
         status: "true",
-        message: "caja eliminada",
+        message: "Caja eliminada con éxito",
       });
     }
   } catch (error) {
     res.status(500).json({
       status: "false",
-      message: "recurso no eliminado",
+      message: "Caja no eliminada",
     });
   } finally {
     connection.end();
@@ -486,4 +485,10 @@ server.delete("/delete-object", async (req, res) => {
   } finally {
     connection.end();
   }
+});
+
+server.post("/logout", (req, res) => {
+  res.clearCookie("access_token");
+  res.json({ success: true, message: "sesión cerrada" });
+  res.redirect("/");
 });
