@@ -1,8 +1,66 @@
 import "../scss/components/Landing.scss";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function Login(props) {
+  const [registerForm, setRegisterForm] = useState({
+    name: "",
+    user: "",
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState({
+    name: "",
+    user: "",
+    email: "",
+    password: "",
+  });
+
+  function handleChangeRegister(event) {
+    const { name, value } = event.target;
+
+    setRegisterForm({
+      ...registerForm,
+      [name]: value,
+    });
+  }
+
   function handleClickForm() {
     props.toggleForm();
   }
+
+  function handleClickRegister(event) {
+    event.preventDefault();
+
+    fetch("http://localhost:5005/register", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(registerForm),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            setErrorMessage({
+              [errorData.field]: errorData.message,
+            });
+            throw new Error(errorData.message);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          navigate("/main");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
+  }
+
   return (
     <section className="section-landing">
       {props.isLogin ? (
@@ -72,47 +130,66 @@ function Login(props) {
                 <input
                   type="text"
                   id="nombre"
+                  name="name"
                   placeholder="Introduce tu nombre"
                   required
+                  onChange={handleChangeRegister}
+                  value={registerForm.name}
                 />
-              </div>
-              <div className="input-group">
-                <label htmlFor="apellidos">Apellidos</label>
-                <input
-                  type="text"
-                  id="apellidos"
-                  placeholder="Introduce tus apellidos"
-                  required
-                />
+                {errorMessage.name && (
+                  <p className="label">{errorMessage.name}</p>
+                )}
               </div>
               <div className="input-group">
                 <label htmlFor="email-register">Correo electrónico</label>
                 <input
                   type="email"
                   id="email-register"
+                  name="email"
                   placeholder="ejemplo@correo.com"
                   required
+                  onChange={handleChangeRegister}
+                  value={registerForm.email}
                 />
+                {errorMessage.email && (
+                  <p className="label">{errorMessage.email}</p>
+                )}
               </div>
               <div className="input-group">
                 <label htmlFor="username">Usuario</label>
                 <input
                   type="text"
                   id="username"
+                  name="user"
                   placeholder="Elige un nombre de usuario"
                   required
+                  onChange={handleChangeRegister}
+                  value={registerForm.user}
                 />
+                {errorMessage.user && (
+                  <p className="label">{errorMessage.user}</p>
+                )}
               </div>
               <div className="input-group">
                 <label htmlFor="password-register">Contraseña</label>
                 <input
                   type="password"
                   id="password-register"
+                  name="password"
                   placeholder="Introduce una contraseña"
                   required
+                  onChange={handleChangeRegister}
+                  value={registerForm.password}
                 />
+                {errorMessage.password && (
+                  <p className="label">{errorMessage.password}</p>
+                )}
               </div>
-              <button type="submit" className="submit-btn">
+              <button
+                type="submit"
+                className="submit-btn"
+                onClick={handleClickRegister}
+              >
                 Registrarse
               </button>
               <p className="switch-text">

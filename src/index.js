@@ -38,8 +38,8 @@ server.listen(port, () => {
 //GET: CAJAS
 
 server.get("/boxs", async (req, res) => {
+  const connection = await getDBConnection();
   try {
-    const connection = await getDBConnection();
     const sqlQuery = "SELECT * FROM box";
     const [boxResult] = await connection.query(sqlQuery);
 
@@ -72,24 +72,25 @@ server.get("/boxs", async (req, res) => {
 */
 
 server.post("/register", async (req, res) => {
+  //recogemos los datos de registro de front que se van a almacenar en la BD
   const { name, user, email, password } = req.body;
 
   //validamos y aseguramos que name no sea muy corto
   if (name.length < 3) {
-    res.status(400).json({
-      code: "NAME_TOO_SHORT",
-      message: "name debe tener al menos 3 caracteres",
+    return res.status(400).json({
+      field: "name",
+      message: "El nombre debe tener al menos 3 caracteres",
     });
   }
   //validamos y nos aseguramos que user sea un string y no sea muy corto
   if (typeof user !== "string") {
-    res.status(400).json({
-      code: "INVALID_USERNAME",
+    return res.status(400).json({
+      field: "user",
       message: "User debe ser un string",
     });
   } else if (user.length < 3) {
-    res.status(400).json({
-      code: "USER_TOO_SHORT",
+    return res.status(400).json({
+      field: "user",
       message: "User debe tener al menos 3 caracteres",
     });
   }
@@ -98,7 +99,7 @@ server.post("/register", async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({
-      code: "INVALID_EMAIL",
+      field: "email",
       message: "El email no tiene un formato válido.",
     });
   }
@@ -106,10 +107,12 @@ server.post("/register", async (req, res) => {
   //Validamos que la contraseña tenga al menos 6 caracteres
   if (password.length < 6) {
     return res.status(400).json({
-      code: "PASSWORD_TOO_SHORT",
+      field: "password",
       message: "La contraseña debe tener al menos 6 caracteres.",
     });
   }
+
+  //Conectamos a la bd
 
   const connection = await getDBConnection();
 
@@ -120,7 +123,7 @@ server.post("/register", async (req, res) => {
 
     if (userExists.length > 0) {
       return res.status(400).json({
-        code: "USERNAME_EXISTS",
+        field: "user",
         message: "El nombre de usuario ya está en uso.",
       });
     }
@@ -131,7 +134,7 @@ server.post("/register", async (req, res) => {
 
     if (emailExists.length > 0) {
       return res.status(400).json({
-        code: "EMAIL_EXISTS",
+        field: "email",
         message: "El email ya está registrado",
       });
     }
@@ -208,8 +211,7 @@ server.post("/login", async (req, res) => {
         return res
           .cookie("access_token", token, {
             httpOnly: true, // la cookie solo se puede acceder en el servidor
-            secure: false,
-            // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
+            secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
           })
           .json({ success: true, user: userResult[0], token: token });
       } else {
@@ -238,7 +240,7 @@ server.post("/login", async (req, res) => {
 //AUTORIZACION
 /*
  - Autorizar:
-        - recoger el token (header params)
+        - recoger el token (cookies)
         - validar el token con la clave secreta
         - guardar la información del estudiante que viene en el token
 */
