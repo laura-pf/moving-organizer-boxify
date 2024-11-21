@@ -74,42 +74,52 @@ server.get("/boxs", async (req, res) => {
 server.post("/register", async (req, res) => {
   //recogemos los datos de registro de front que se van a almacenar en la BD
   const { name, user, email, password } = req.body;
+  const errors = []; //Array para acumular errores
 
   //validamos y aseguramos que name no sea muy corto
   if (name.length < 3) {
-    return res.status(400).json({
+    errors.push({
       field: "name",
-      message: "El nombre debe tener al menos 3 caracteres",
+      message: "el nombre debe tener al menos 3 caracteres",
     });
+  }
+  if (!name || name.trim() === " ") {
+    errors.push({ field: "name", message: "El nombre es obligatorio" });
   }
   //validamos y nos aseguramos que user sea un string y no sea muy corto
   if (typeof user !== "string") {
-    return res.status(400).json({
-      field: "user",
-      message: "User debe ser un string",
-    });
+    errors.push({ field: "user", message: "User debe ser un string" });
   } else if (user.length < 3) {
-    return res.status(400).json({
+    errors.push({
       field: "user",
-      message: "User debe tener al menos 3 caracteres",
+      message: "El usuario debe tener al menos 3 caracteres",
     });
+  }
+  if (!user || user.trim() === "") {
+    errors.push({ field: "user", message: "El usuario es obligatorio" });
   }
 
   //Validamos email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({
+    errors.push({
       field: "email",
       message: "El email no tiene un formato válido.",
     });
   }
+  if (!email || email.trim() === "") {
+    errors.push({ field: "email", message: "El email es obligatorio" });
+  }
 
   //Validamos que la contraseña tenga al menos 6 caracteres
   if (password.length < 6) {
-    return res.status(400).json({
+    errors.push({
       field: "password",
       message: "La contraseña debe tener al menos 6 caracteres.",
     });
+  }
+  if (!password || password.trim() === "") {
+    errors.push({ field: "password", message: "La contraseña es obligatoria" });
   }
 
   //Conectamos a la bd
@@ -122,7 +132,7 @@ server.post("/register", async (req, res) => {
     const [userExists] = await connection.query(userQuery, [user]);
 
     if (userExists.length > 0) {
-      return res.status(400).json({
+      errors.push({
         field: "user",
         message: "El nombre de usuario ya está en uso.",
       });
@@ -133,10 +143,16 @@ server.post("/register", async (req, res) => {
     const [emailExists] = await connection.query(emailQuery, [email]);
 
     if (emailExists.length > 0) {
-      return res.status(400).json({
+      errors.push({
         field: "email",
         message: "El email ya está registrado",
       });
+    }
+
+    // Si hay errores después de consultar la BD, devolverlos
+    console.log("errors:", errors);
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
     }
 
     // Encriptar la contraseña
@@ -163,6 +179,56 @@ server.post("/register", async (req, res) => {
     });
   } finally {
     // Cerrar la conexión a la base de datos
+    connection.end();
+  }
+});
+
+//VERIFICACIONES EMAIL Y USER EN EL REGISTRO ANTES DE ENVIAR A FRONT
+
+server.post("/user", async (req, res) => {
+  const { user } = req.body;
+
+  const connection = await getDBConnection();
+
+  try {
+    const query = "SELECT * FROM users WHERE user = ?";
+    const [results] = await connection.query(query, [user]);
+
+    if (results.length > 0) {
+      return res
+        .status(409)
+        .json({ success: false, message: "El usuario ya está registrado." });
+    }
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error al verificar al usuario" });
+  } finally {
+    connection.end();
+  }
+});
+
+server.post("/email", async (req, res) => {
+  const { email } = req.body;
+
+  const connection = await getDBConnection();
+
+  try {
+    const query = "SELECT * FROM users WHERE email = ?";
+    const [results] = await connection.query(query, [email]);
+
+    if (results.length > 0) {
+      return res
+        .status(409)
+        .json({ success: false, message: "El email ya esta registrado" });
+    }
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error al verificar el email" });
+  } finally {
     connection.end();
   }
 });
