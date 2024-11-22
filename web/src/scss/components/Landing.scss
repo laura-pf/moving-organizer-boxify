@@ -52,6 +52,8 @@ body {
   font-family: $body;
   width: 100%;
   max-width: 400px;
+  min-width: 300px;
+
   padding: 20px;
   background-color: #fff;
 
@@ -86,8 +88,15 @@ body {
 }
 
 .input-group input:focus {
-  border-color: $color-tittle;
+  border-color: rgb(19, 188, 240);
   outline: none;
+}
+.input-group input.input-error {
+  border: 1px solid rgb(224, 104, 5);
+}
+
+.input-group label.label-error {
+  color: rgb(224, 104, 5);
 }
 
 .submit-btn {
@@ -144,17 +153,17 @@ body {
   background-position: center;
   background-size: 95%;
 }
-.register {
-  display: flex;
-  flex-direction: row;
-  min-height: 250px;
+// .register {
+//   display: flex;
+//   flex-direction: row;
+//   min-height: 250px;
 
-  align-items: center;
-  background-image: url("../../images/chica-caja.jpg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 95%;
-}
+//   align-items: center;
+//   background-image: url("../../images/chica-caja.jpg");
+//   background-repeat: no-repeat;
+//   background-position: center;
+//   background-size: 95%;
+// }
 
 .section-landing {
   margin-top: 10px;
@@ -187,7 +196,7 @@ body {
 }
 
 .error-message {
-  color: $color-tittle;
+  color: rgb(252, 88, 23);
   font-family: $body;
   font-size: 11px;
   font-weight: 700;

@@ -129,24 +129,8 @@ function Login(props) {
 
   return (
     <section className="section-landing">
-      {props.isLogin ? (
-        <div className="container-login welcome">
-          {/* <h1></h1>
-          <p className="login-description">
-            Crea cajas virtuales y agrega los objetos que desees, para que no
-            pierdas nada de vista durante la mudanza. Regístrate o inicia sesión
-            para comenzar a planificar tu mudanza de manera eficiente y sin
-            complicaciones.
-          </p> */}
-        </div>
-      ) : (
-        <div className="container-login register">
-          <h1></h1>
-          {/* <p className="login-description">
-            ...y disfruta de las ventajas de esta APP
-          </p> */}
-        </div>
-      )}
+      <div className="container-login welcome"></div>
+
       <div className="container-login">
         {props.isLogin ? (
           <div className="form-box">
@@ -192,7 +176,12 @@ function Login(props) {
             <h2>Regístrate</h2>
             <form id="registerForm">
               <div className="input-group">
-                <label htmlFor="nombre">Nombre</label>
+                <label
+                  htmlFor="nombre"
+                  className={errorMessage.name ? "label-error" : ""}
+                >
+                  Nombre
+                </label>
                 <input
                   type="text"
                   id="nombre"
@@ -201,6 +190,7 @@ function Login(props) {
                   required
                   onChange={handleChangeRegister}
                   value={registerForm.name}
+                  className={errorMessage.name ? "input-error" : ""}
                 />
                 {errorMessage.name ? (
                   <p className="error-message">{errorMessage.name}</p>
@@ -209,7 +199,12 @@ function Login(props) {
                 )}
               </div>
               <div className="input-group">
-                <label htmlFor="email-register">Correo electrónico</label>
+                <label
+                  htmlFor="email-register"
+                  className={errorMessage.email ? "label-error" : ""}
+                >
+                  Correo electrónico
+                </label>
                 <input
                   type="email"
                   id="email-register"
@@ -221,6 +216,7 @@ function Login(props) {
                     handleChangeField("email", e.target.value);
                   }}
                   value={registerForm.email}
+                  className={errorMessage.email ? "input-error" : ""}
                 />
                 {errorMessage.email ? (
                   <p className="error-message">{errorMessage.email}</p>
@@ -229,7 +225,12 @@ function Login(props) {
                 )}
               </div>
               <div className="input-group">
-                <label htmlFor="username">Usuario</label>
+                <label
+                  htmlFor="username"
+                  className={errorMessage.user ? "label-error" : ""}
+                >
+                  Usuario
+                </label>
                 <input
                   type="text"
                   id="username"
@@ -241,6 +242,7 @@ function Login(props) {
                     handleChangeField("user", e.target.value);
                   }}
                   value={registerForm.user}
+                  className={errorMessage.user ? "input-error" : ""}
                 />
                 {errorMessage.user ? (
                   <p className="error-message">{errorMessage.user}</p>
@@ -249,7 +251,12 @@ function Login(props) {
                 )}
               </div>
               <div className="input-group">
-                <label htmlFor="password-register">Contraseña</label>
+                <label
+                  htmlFor="password-register"
+                  className={errorMessage.password ? "label-error" : ""}
+                >
+                  Contraseña
+                </label>
                 <input
                   type="password"
                   id="password-register"
@@ -258,6 +265,7 @@ function Login(props) {
                   required
                   onChange={handleChangeRegister}
                   value={registerForm.password}
+                  className={errorMessage.password ? "input-error" : ""}
                 />
                 {errorMessage.password ? (
                   <p className="error-message">{errorMessage.password}</p>
