@@ -108,7 +108,18 @@ body {
   color: white;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.submit-btn:hover:not(:active) {
+  background-color: #005ea6; /* Color más oscuro para hover */
+  transform: scale(1);
+}
+
+.submit-btn:active {
+  transform: scale(0.95); /* Efecto de hundimiento */
+  background-color: rgb(19, 188, 240); /* Color azul más claro */
+  box-shadow: 0 0 10px rgb(80, 79, 79); /* Sombra más sutil */
 }
 
 .switch-text {

@@ -74,7 +74,6 @@ function Login(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (!data.success) {
           setErrorMessage((prev) => ({
             ...prev,
@@ -115,16 +114,22 @@ function Login(props) {
             throw new Error("Errores en los campos."); // Lanzamos un error genérico para detener el flujo
           });
         }
+        return response.json();
       })
 
       .then((data) => {
         if (data.success) {
+          console.log(data);
           navigate("/main");
         }
       })
       .catch((error) => {
         console.error("Error:", error.message);
       });
+  }
+
+  function handleResetRegister() {
+    setErrorMessage("");
   }
 
   return (
@@ -282,7 +287,13 @@ function Login(props) {
               </button>
               <p className="switch-text">
                 ¿Ya tienes una cuenta?{" "}
-                <a href="#" onClick={handleClickForm}>
+                <a
+                  href="#"
+                  onClick={() => {
+                    handleClickForm();
+                    handleResetRegister();
+                  }}
+                >
                   Inicia Sesión
                 </a>
               </p>
