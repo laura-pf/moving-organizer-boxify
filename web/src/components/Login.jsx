@@ -1,6 +1,6 @@
 import "../scss/components/Landing.scss";
 import { useState } from "react";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login(props) {
   const [registerForm, setRegisterForm] = useState({

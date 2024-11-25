@@ -11,7 +11,13 @@ const server = express();
 
 //configurar el servidor
 server.use(express.json({ limit: "25mb" }));
-server.use(cors());
+server.use(
+  cors({
+    //No me funcionaba el cierre de sesion y añado:
+    origin: "http://localhost:5173", // Especifica el origen permitido
+    credentials: true, // Habilita las credenciales (cookies, auth headers, etc.)
+  })
+);
 require("dotenv").config(); // permitimos el uso de variables de entorno, instalar libreria
 server.use(cookieParser());
 
@@ -558,5 +564,4 @@ server.delete("/delete-object", async (req, res) => {
 server.post("/logout", (req, res) => {
   res.clearCookie("access_token");
   res.json({ success: true, message: "sesión cerrada" });
-  res.redirect("/");
 });

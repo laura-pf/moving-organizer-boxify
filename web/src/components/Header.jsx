@@ -1,8 +1,10 @@
 import "../scss/components/Header.scss";
 import LogoBox from "../images/logo-boxify.png";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header(props) {
+  const navigate = useNavigate();
   function handleClickMenu(event) {
     event.preventDefault();
     props.toggleMenu();
@@ -13,7 +15,21 @@ function Header(props) {
   }
 
   function handleClickLogout() {
-    fetch();
+    fetch("http://localhost:5005/logout", {
+      method: "POST",
+      credentials: "include", //envia las cookies en la solicitud
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error al cerrar sesión");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          navigate("/");
+        }
+      });
   }
 
   return (
