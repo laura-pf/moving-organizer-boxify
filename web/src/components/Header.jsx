@@ -12,6 +12,10 @@ function Header(props) {
     props.onClickCloseMenu();
   }
 
+  function handleClickLogout() {
+    fetch();
+  }
+
   return (
     <header className="header">
       <nav className="header__nav">
@@ -31,7 +35,9 @@ function Header(props) {
           <Link to="/contact">
             <li className="nav-list-item">| Contacto |</li>
           </Link>
-          <li className="nav-list-item">| Cerrar sesión |</li>
+          <li className="nav-list-item" onClick={handleClickLogout}>
+            | Cerrar sesión |
+          </li>
         </ul>
 
         <button className="menu-button" onClick={handleClickMenu}></button>

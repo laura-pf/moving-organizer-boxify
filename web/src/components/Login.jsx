@@ -1,6 +1,6 @@
 import "../scss/components/Landing.scss";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 
 function Login(props) {
   const [registerForm, setRegisterForm] = useState({
@@ -16,8 +16,122 @@ function Login(props) {
     email: "",
     password: "",
   });
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errorLogin, setErrorLogin] = useState({
+    email: "",
+    password: "",
+  });
   function handleClickForm() {
     props.toggleForm();
+
+    //objeto para actualizar mensajes de error
+
+    const emptyErrorMessage = {};
+
+    //iteramos en cada campo los mensajes de error: si hay mensaje de error y el campo esta vacio, limpiar mensaje de error, si no, mantener el mensaje de error.
+
+    for (const field in errorMessage) {
+      if (errorMessage[field] && registerForm[field] === "") {
+        emptyErrorMessage[field] = "";
+      } else {
+        emptyErrorMessage[field] = errorMessage[field];
+      }
+    }
+
+    setErrorMessage(emptyErrorMessage);
+    setErrorLogin({
+      email: "",
+      password: "",
+    });
+  }
+
+  function handleChangeLogin(e) {
+    const { name, value } = e.target;
+
+    setLoginForm({
+      ...loginForm,
+      [name]: value,
+    });
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let updateError = "";
+
+    if (name === "email") {
+      if (value.trim() === "") {
+        updateError = "";
+      } else if (!emailRegex.test(value)) {
+        updateError = "El email no tiene un formato valido";
+      } else {
+        updateError = "";
+      }
+    }
+
+    setErrorLogin({
+      ...errorLogin,
+      [name]: updateError,
+    });
+  }
+
+  //habria que hacer otra funcion manejadora para comprobar el email que ingresa esta registrado o no, yo lo pondria dentro de un eventoclick en iniciar sesion. (email no registrado y contraseña incorrecta)
+
+  function handleClickLogin(e) {
+    e.preventDefault();
+
+    const errors = { email: "", password: "" };
+
+    if (!loginForm.email.trim()) {
+      errors.email = "El email es obligatorio";
+    }
+    if (!loginForm.password.trim()) {
+      errors.password = "La contraseña es obligatoria";
+    }
+
+    setErrorLogin(errors);
+
+    fetch("http://localhost:5005/login", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(loginForm),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            const serverErrors = { email: "", password: "" };
+            console.log("response", response);
+            console.log(errorData);
+
+            if (errorData.message.includes("email") && loginForm.email) {
+              serverErrors.email = "El email no está registrado";
+              serverErrors.password = "";
+            }
+
+            if (errorData.message.includes("contraseña")) {
+              serverErrors.password = "Contraseña incorrecta";
+            }
+
+            setErrorLogin({
+              email: serverErrors.email || errors.email,
+              password: serverErrors.password || errors.password,
+            });
+            throw new Error("Errores en los campos.");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          navigate("/main"); // Redirige al usuario
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error.message);
+      });
   }
 
   function handleChangeRegister(e) {
@@ -119,17 +233,12 @@ function Login(props) {
 
       .then((data) => {
         if (data.success) {
-          console.log(data);
           navigate("/main");
         }
       })
       .catch((error) => {
         console.error("Error:", error.message);
       });
-  }
-
-  function handleResetRegister() {
-    setErrorMessage("");
   }
 
   return (
@@ -142,32 +251,60 @@ function Login(props) {
             <h2>Iniciar Sesión</h2>
             <form id="loginForm">
               <div className="input-group">
-                <label htmlFor="email" className="label">
+                <label
+                  htmlFor="email"
+                  className={errorLogin.email ? "label-error" : ""}
+                >
                   Correo electrónico
                 </label>
                 <input
-                  className="label"
                   type="email"
                   id="email"
                   placeholder="ejemplo@correo.com"
+                  name="email"
+                  onChange={handleChangeLogin}
+                  value={loginForm.email}
                   required
+                  className={errorLogin.email ? "input-error" : ""}
                 />
+                {errorLogin.email ? (
+                  <p className="error-message">{errorLogin.email}</p>
+                ) : (
+                  <p className="error-message">&nbsp;</p>
+                )}
               </div>
               <div className="input-group">
-                <label htmlFor="password" className="label">
+                <label
+                  htmlFor="password"
+                  className={errorLogin.password ? "label-error" : ""}
+                >
                   Contraseña
                 </label>
                 <input
-                  className="label"
                   type="password"
                   id="password"
                   placeholder="Introduce tu contraseña"
+                  name="password"
+                  value={loginForm.password}
+                  onChange={handleChangeLogin}
+                  className={errorLogin.password ? "input-error" : ""}
                   required
-                />
+                />{" "}
+                {errorLogin.password ? (
+                  <p className="error-message">{errorLogin.password}</p>
+                ) : (
+                  <p className="error-message">&nbsp;</p>
+                )}
               </div>
-              <button type="submit" className="submit-btn">
+
+              <button
+                type="submit"
+                className="submit-btn"
+                onClick={handleClickLogin}
+              >
                 Iniciar Sesión
               </button>
+
               <p className="switch-text">
                 ¿Aún no estás registrado?{" "}
                 <a href="#" onClick={handleClickForm}>
@@ -287,13 +424,7 @@ function Login(props) {
               </button>
               <p className="switch-text">
                 ¿Ya tienes una cuenta?{" "}
-                <a
-                  href="#"
-                  onClick={() => {
-                    handleClickForm();
-                    handleResetRegister();
-                  }}
-                >
+                <a href="#" onClick={handleClickForm}>
                   Inicia Sesión
                 </a>
               </p>

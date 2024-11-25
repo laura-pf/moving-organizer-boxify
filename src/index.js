@@ -283,7 +283,7 @@ server.post("/login", async (req, res) => {
       } else {
         return res.status(401).json({
           success: false,
-          message: "Usuario no autenticado. Contraseña incorrecta",
+          message: "Usuario no autenticado, contraseña incorrecta",
         });
       }
       //si el usuario no se encuentra
