@@ -8,6 +8,7 @@
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center 30px;
+  animation: fadeIn 0.5s ease;
 
   &__tittle {
     font-family: $body;
@@ -28,12 +29,23 @@
     }
   }
   &__back {
+    border: 1px solid rgb(19, 188, 240);
+    border-radius: 50px;
+    padding: 10px;
     font-family: $body;
-    color: $color-tittle;
+    color: rgb(19, 188, 240);
     font-weight: 700;
     align-self: center;
     margin-bottom: 30px;
-    text-decoration: underline;
+    text-decoration: none;
+    transition: all 300ms ease-in-out;
+    &:hover {
+      color: $color-tittle;
+      transform: scale(1.2);
+      transition: all 0.3s ease;
+      background-color: $pastel-pink;
+      border: 1px solid $color-tittle;
+    }
   }
 }
 
@@ -67,6 +79,15 @@
       font-family: $body;
       font-size: 17px;
       cursor: pointer;
+      &:hover:not(:active) {
+        background-color: #005ea6;
+        transform: scale(1);
+      }
+      &:active {
+        transform: scale(0.95);
+        background-color: rgb(19, 188, 240);
+        box-shadow: 0 0 10px rgb(80, 79, 79);
+      }
     }
   }
 }

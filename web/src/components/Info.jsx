@@ -8,7 +8,7 @@ function Info(props) {
   }
 
   return (
-    <>
+    <section className="contact">
       <div className="container-link">
         <Link onClick={handleClick} className="container-link__link" to="/main">
           &lt; Volver
@@ -49,7 +49,7 @@ function Info(props) {
       {props.mobileMenuHeader && (
         <MobileMenuHeader onClickCloseMenu={props.onClickCloseMenu} />
       )}
-    </>
+    </section>
   );
 }
 

@@ -6,13 +6,14 @@ import Contact from "./Contact";
 import Info from "./Info";
 import Header from "./Header";
 import { useEffect, useState } from "react";
-import LogoBox from "../images/caja-png.png";
 import Box from "./Box";
 import localStorage from "../services/localStorage";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 function App() {
   const [modalAddBox, setModalAddBox] = useState(false);
   const location = useLocation();
+
   const [inputModalAddBox, setInputModalAddBox] = useState("");
   const [addedBox, setAddedBox] = useState(() => {
     return localStorage.get("boxes", []);
@@ -86,7 +87,6 @@ function App() {
       const newBox = {
         id: Date.now(),
         tittle: inputModalAddBox,
-        // image: LogoBox, esto lo quito porque ahora estamos cogiendo la info de la bd
         objects: [],
         message: "",
       };
@@ -301,6 +301,7 @@ function App() {
           onClickCloseMenu={handleCloseMenu}
         />
       )}
+
       <Routes>
         <Route
           path="/"

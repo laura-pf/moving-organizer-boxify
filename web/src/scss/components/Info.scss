@@ -2,16 +2,13 @@
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  //quito estilos de link volver por el menu header sticky, me gusta mas en el centro tambien
 
-  // &-link {
-  //   margin-top: 15px;
-  //   display: block;
-  //   margin-left: 20px;
-  // }
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 .info {
   color: gray;
@@ -25,7 +22,7 @@
 
   // border: 3px, solid, $color-tittle;
   padding: 0 20px;
-  animation: fadeIn 0.5s ease;
+  // animation: fadeIn 0.5s ease;
   &__tittle {
     font-family: $body;
     color: $color-tittle;
@@ -54,7 +51,7 @@
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-  animation: fadeIn 0.5s ease;
+  // animation: fadeIn 0.5s ease;
   @media screen and (min-width: 768px) {
     height: 400px;
   }

@@ -32,9 +32,16 @@
   font-weight: bold;
   color: $color-tittle;
   cursor: pointer;
+  transition: all 300ms ease-in-out;
   @media screen and (min-width: 1024px) {
     font-size: 15px;
   }
+}
+
+.nav-list-item:hover {
+  color: rgb(19, 188, 240);
+  transform: scale(1.2);
+  transition: all 0.3s ease;
 }
 
 .menu-button {
