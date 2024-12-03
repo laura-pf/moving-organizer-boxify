@@ -15,6 +15,7 @@ function ModalAddBox(props) {
     event.preventDefault();
     props.onClickAddBox();
   }
+
   return (
     <section className="popup-add-box">
       <div className="container-add-box">

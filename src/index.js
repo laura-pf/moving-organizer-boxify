@@ -41,30 +41,6 @@ server.listen(port, () => {
 
 //ENDPOINTS
 
-//GET: CAJAS
-
-server.get("/boxs", async (req, res) => {
-  const connection = await getDBConnection();
-  try {
-    const sqlQuery = "SELECT * FROM box";
-    const [boxResult] = await connection.query(sqlQuery);
-
-    res.status(200).json({
-      status: true,
-      result: boxResult,
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: false,
-      message: "No se pueden mostrar las cajas en este momento",
-    });
-  } finally {
-    if (connection) {
-      connection.end();
-    }
-  }
-});
-
 //REGISTRO:
 
 /*
@@ -283,7 +259,9 @@ server.post("/login", async (req, res) => {
         return res
           .cookie("access_token", token, {
             httpOnly: true, // la cookie solo se puede acceder en el servidor
-            secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
+            // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
+            secure: false, //en desarrollo usamos false
+            sameSite: "Lax",
           })
           .json({ success: true, user: userResult[0], token: token });
       } else {
@@ -362,6 +340,31 @@ server.get("/profile-user", authorize, async (req, res) => {
     success: true,
     user: req.user,
   });
+});
+
+//GET: MOSTRAR CAJAS
+
+server.get("/boxs", authorize, async (req, res) => {
+  const userId = req.user.id;
+  const connection = await getDBConnection();
+  try {
+    const sqlQuery = "SELECT * FROM box WHERE fk_user_id=?";
+    const [boxResult] = await connection.query(sqlQuery, [userId]);
+
+    res.status(200).json({
+      status: true,
+      result: boxResult,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "No se pueden mostrar las cajas en este momento",
+    });
+  } finally {
+    if (connection) {
+      connection.end();
+    }
+  }
 });
 
 //ENDPOINT AÑADIR CAJAS (SEGUN EL LOGIN DE USUARIO)

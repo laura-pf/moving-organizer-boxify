@@ -8,7 +8,6 @@ import Header from "./Header";
 import { useEffect, useState } from "react";
 import Box from "./Box";
 import localStorage from "../services/localStorage";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 function App() {
   const [modalAddBox, setModalAddBox] = useState(false);
@@ -37,7 +36,10 @@ function App() {
 
   //FETCH MOSTRAR CAJAS
   useEffect(() => {
-    fetch(`http://localhost:5005/boxs`)
+    fetch(`http://localhost:5005/boxs`, {
+      method: "GET",
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         const boxData = data.result.map((box) => {
@@ -83,19 +85,55 @@ function App() {
     } else if (doesBoxExist) {
       setMesaggeAddBox("Ya hay otra caja con ese nombre");
       return;
-    } else {
-      const newBox = {
-        id: Date.now(),
-        tittle: inputModalAddBox,
-        objects: [],
-        message: "",
-      };
-      setAddedBox([...addedBox, newBox]);
-      setInputModalAddBox("");
-      setMesaggeAddBox("");
-      setModalAddBox(false);
     }
+
+    const newBox = {
+      tittle: inputModalAddBox,
+    };
+
+    fetch("http://localhost:5005/add-box", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify(newBox),
+      credentials: "include", //Asegura que las cookies se envien automáticamente
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.message || "Error al añadir caja");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          const addedBoxFromServer = {
+            id: data.boxId,
+            tittle: newBox.tittle,
+            objects: [],
+            message: "",
+          };
+
+          setAddedBox([...addedBox, addedBoxFromServer]);
+          setInputModalAddBox("");
+          setMesaggeAddBox("");
+          setModalAddBox(false);
+        } else {
+          setMesaggeAddBox(data.message || "Error al añadir la caja");
+        }
+      })
+      .catch((error) => {
+        // Manejo de errores de red u otros errores
+        setMesaggeAddBox(
+          error.message || "Hubo un problema al conectar con el servidor"
+        );
+      });
   }
+
+  // setAddedBox([...addedBox, newBox]);
+  // setInputModalAddBox("");
+  // setMesaggeAddBox("");
+  // setModalAddBox(false);
 
   //funcion aparece mensaje eliminar
   function handleQuestionRemoveBox(box) {

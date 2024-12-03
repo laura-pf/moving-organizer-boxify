@@ -97,6 +97,7 @@ function Login(props) {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(loginForm),
+      credentials: "include",
     })
       .then((response) => {
         if (!response.ok) {
@@ -131,6 +132,8 @@ function Login(props) {
       })
       .catch((error) => {
         console.error("Error:", error.message);
+
+        console.log(document.cookie);
       });
   }
 
@@ -207,6 +210,7 @@ function Login(props) {
         "Content-type": "application/json",
       },
       body: JSON.stringify(registerForm),
+      credentials: "include",
     })
       .then((response) => {
         if (!response.ok) {
