@@ -26,34 +26,31 @@ function Main(props) {
           inputFilterObject={props.inputFilterObject}
           onChangeInputObject={props.onChangeInputObject}
         />
-        {props.addedBox.length > 0 ? (
-          <ul className="container-list-box">
-            {props.addedBox.map((box) => (
-              <BoxList
-                addedBox={props.addedBox} //cajas filtradas que pasamos por props desde app a main
-                key={box.id}
-                box={box}
-                onClickRemoveBox={props.onClickRemoveBox}
-                modalRemoveBox={props.modalRemoveBox}
-                questionRemove={props.questionRemove}
-                onCloseModal={props.onCloseModal}
-                boxToRemove={props.boxToRemove}
-                onClickCloseMenu={props.onClickCloseMenu}
-              />
-            ))}
 
-            <li className="container-box" onClick={handleClick}>
-              <h3 className="container-box__tittle">Añadir caja</h3>
-              <img
-                className="icon-add"
-                src={IconAdd}
-                alt="imagen icono para añadir"
-              />
-            </li>
-          </ul>
-        ) : (
-          <p className="label not-found"> No se encuentra lo que buscas</p>
-        )}
+        <ul className="container-list-box">
+          {props.addedBox.map((box) => (
+            <BoxList
+              addedBox={props.addedBox} //cajas filtradas que pasamos por props desde app a main
+              key={box.id}
+              box={box}
+              onClickRemoveBox={props.onClickRemoveBox}
+              modalRemoveBox={props.modalRemoveBox}
+              questionRemove={props.questionRemove}
+              onCloseModal={props.onCloseModal}
+              boxToRemove={props.boxToRemove}
+              onClickCloseMenu={props.onClickCloseMenu}
+            />
+          ))}
+
+          <li className="container-box" onClick={handleClick}>
+            <h3 className="container-box__tittle">Añadir caja</h3>
+            <img
+              className="icon-add"
+              src={IconAdd}
+              alt="imagen icono para añadir"
+            />
+          </li>
+        </ul>
       </section>
 
       {props.modalAddBox && (

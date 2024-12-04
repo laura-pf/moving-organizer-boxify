@@ -26,6 +26,7 @@ function App() {
   const [mobileMenuHeader, setMobileMenuHeader] = useState(false);
   const [modalRemoveBox, setModalRemoveBox] = useState(false);
   const [boxToRemove, setBoxToRemove] = useState(null);
+  const [login, setLogin] = useState(false);
 
   // const [messageAddObject, setMessageAddObject] = useState("");
 
@@ -37,6 +38,9 @@ function App() {
 
   //FETCH MOSTRAR CAJAS
   useEffect(() => {
+    if (!login) {
+      return;
+    }
     fetch(`http://localhost:5005/boxs`, {
       method: "GET",
       credentials: "include",
@@ -51,9 +55,8 @@ function App() {
           };
         });
         setAddedBox(boxData);
-        console.log(boxData);
       });
-  }, []);
+  }, [login]);
 
   /*abrir pop up añadir caja*/
   function handleModalAddBox() {
@@ -388,7 +391,13 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Landing toggleForm={handleClickForm} isLogin={isLogin} />}
+          element={
+            <Landing
+              toggleForm={handleClickForm}
+              isLogin={isLogin}
+              setLogin={setLogin}
+            />
+          }
         />
         <Route
           path="/main"

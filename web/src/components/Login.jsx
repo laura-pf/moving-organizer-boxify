@@ -25,6 +25,7 @@ function Login(props) {
     email: "",
     password: "",
   });
+
   function handleClickForm() {
     props.toggleForm();
 
@@ -127,6 +128,7 @@ function Login(props) {
       .then((data) => {
         console.log(data);
         if (data.success) {
+          props.setLogin(true);
           navigate("/main"); // Redirige al usuario
         }
       })
@@ -237,6 +239,7 @@ function Login(props) {
 
       .then((data) => {
         if (data.success) {
+          props.setLogin(true);
           navigate("/main");
         }
       })
