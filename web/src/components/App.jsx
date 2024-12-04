@@ -221,28 +221,69 @@ function App() {
       // Actualizar el estado con las cajas modificadas
       setAddedBox(updatedBoxes);
       return; // Salir si el objeto ya existe
-    } else {
-      // Si no existe, proceder a añadir el nuevo objeto
-      const newObject = {
-        text: inputAddObject.trim(),
-        checked: false,
-      };
-
-      // Crear un nuevo array de cajas actualizadas
-      const updatedBoxes = addedBox.map((box) => {
-        if (box.id === boxSelected.id) {
-          return {
-            ...box,
-            objects: [...box.objects, newObject], // Añadir el nuevo objeto
-            message: "", // Limpiar cualquier mensaje de error después de añadir
-          };
-        }
-        return box; // No hacer cambios en las otras cajas
-      });
-
-      // Actualizar el estado con las cajas actualizadas
-      setAddedBox(updatedBoxes);
     }
+
+    // Si no existe, proceder a añadir el nuevo objeto
+    const newObject = {
+      text: inputAddObject.trim(),
+      checked: false,
+    };
+
+    //preparamos los datos para enviar al servidor:
+    const dataToSend = {
+      boxId: boxSelected.id,
+      objects: [newObject],
+    };
+
+    fetch("http://localhost:5005/add-objects", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dataToSend),
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.message || "Error al añadir objetos");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          // Actualizamos la caja en el frontend con el nuevo objeto
+          const updatedBoxes = addedBox.map(
+            (box) =>
+              box.id === boxSelected.id
+                ? {
+                    ...box,
+                    objects: [...box.objects, newObject],
+                    message: "", // Limpiamos cualquier mensaje de error
+                  }
+                : box //se devuelve la caja si el id no coincide tal y como estaba
+          );
+          setAddedBox(updatedBoxes);
+        } else {
+          // Mostramos el mensaje de error recibido del servidor
+          const updatedBoxes = addedBox.map((box) =>
+            box.id === boxSelected.id ? { ...box, message: data.message } : box
+          );
+          setAddedBox(updatedBoxes);
+        }
+      })
+      .catch((error) => {
+        // Manejo de errores de red o del servidor
+        const updatedBoxes = addedBox.map((box) =>
+          box.id === boxSelected.id
+            ? {
+                ...box,
+                message:
+                  error.message || "Hubo un problema al añadir el objeto",
+              }
+            : box
+        );
+        setAddedBox(updatedBoxes);
+      });
   }
 
   //Marcar con check cada elemento de la lista
