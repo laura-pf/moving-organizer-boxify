@@ -26,6 +26,7 @@ function App() {
   const [mobileMenuHeader, setMobileMenuHeader] = useState(false);
   const [modalRemoveBox, setModalRemoveBox] = useState(false);
   const [boxToRemove, setBoxToRemove] = useState(null);
+
   // const [messageAddObject, setMessageAddObject] = useState("");
 
   //guardar en localStorage:
@@ -331,6 +332,9 @@ function App() {
     setMobileMenuHeader(false);
   }
 
+  function handleClickLogoutMobile() {
+    setMobileMenuHeader(false);
+  }
   return (
     <>
       {location.pathname !== "/" && (
@@ -369,6 +373,7 @@ function App() {
               onClickCloseMenu={handleCloseMenu}
               modalRemoveBox={modalRemoveBox}
               boxToRemove={boxToRemove}
+              onClickLogoutMobile={handleClickLogoutMobile}
             />
           }
         />
@@ -378,6 +383,7 @@ function App() {
             <Contact
               onClickCloseMenu={handleCloseMenu}
               mobileMenuHeader={mobileMenuHeader}
+              onClickLogoutMobile={handleClickLogoutMobile}
             />
           }
         />
@@ -387,6 +393,7 @@ function App() {
             <Info
               onClickCloseMenu={handleCloseMenu}
               mobileMenuHeader={mobileMenuHeader}
+              onClickLogoutMobile={handleClickLogoutMobile}
             />
           }
         />
@@ -403,6 +410,7 @@ function App() {
               onClickRemoveItem={handleRemoveItem}
               // objectFilter={filteredObject}
               mobileMenuHeader={mobileMenuHeader}
+              onClickLogoutMobile={handleClickLogoutMobile}
             />
           }
         />

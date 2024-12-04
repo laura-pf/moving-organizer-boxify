@@ -86,15 +86,11 @@
   justify-content: center;
   align-items: center;
   padding-bottom: 60px;
-  @media screen and (min-width: 600px) {
+  @media screen and (min-width: 768px) {
     flex-direction: row;
-    justify-content: flex-start;
+    gap: 5px;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-  @media screen and (min-width: 1200px) {
-    justify-content: flex-start;
-    gap: 50px;
   }
 }
 

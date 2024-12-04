@@ -47,7 +47,10 @@ function Contact(props) {
         </ul>
       </div>
       {props.mobileMenuHeader && (
-        <MobileMenuHeader onClickCloseMenu={props.onClickCloseMenu} />
+        <MobileMenuHeader
+          onClickCloseMenu={props.onClickCloseMenu}
+          onClickLogoutMobile={props.onClickLogoutMobile}
+        />
       )}
     </section>
   );

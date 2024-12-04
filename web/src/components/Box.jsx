@@ -89,7 +89,10 @@ function Box(props) {
         </ul>
 
         {props.mobileMenuHeader && (
-          <MobileMenuHeader onClickCloseMenu={handleClick} />
+          <MobileMenuHeader
+            onClickCloseMenu={handleClick}
+            onClickLogoutMobile={props.onClickLogoutMobile}
+          />
         )}
       </div>
     </div>
