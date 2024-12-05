@@ -147,12 +147,30 @@ function App() {
 
   //función eliminar caja (SI)
 
-  function handleClickRemoveBox() {
-    const removedBox = addedBox.filter((box) => box.id !== boxToRemove.id);
-    setAddedBox(removedBox);
-    setModalRemoveBox(false);
-    setBoxToRemove(null);
-    localStorage.clear();
+  function handleClickRemoveBox(id) {
+    const removedBox = addedBox.filter((box) => box.id !== id);
+    console.log(removedBox);
+
+    fetch(`http://localhost:5005/delete-box/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} - ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Recurso eliminado con éxito:", data);
+        setAddedBox(removedBox);
+        setModalRemoveBox(false);
+        setBoxToRemove(null);
+        localStorage.clear();
+      })
+      .catch((error) => {
+        console.error("Error eliminando el recurso:", error);
+      });
   }
 
   //funcion cerrar modal mensaje eliminar caja (NO)

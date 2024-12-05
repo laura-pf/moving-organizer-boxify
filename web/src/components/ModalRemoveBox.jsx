@@ -2,7 +2,7 @@ import "../scss/components/ModalRemoveBox.scss";
 
 function ModalRemoveBox(props) {
   function handleClickRemove() {
-    props.onClickRemoveBox();
+    props.onClickRemoveBox(props.box.id);
   }
 
   function handleClickCloseModal() {
@@ -20,7 +20,7 @@ function ModalRemoveBox(props) {
         <div className="buttons">
           <button
             className="button-add-box buttons__yesno"
-            onClick={() => handleClickRemove()}
+            onClick={handleClickRemove}
           >
             Si
           </button>
