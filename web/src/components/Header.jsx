@@ -2,6 +2,7 @@ import "../scss/components/Header.scss";
 import LogoBox from "../images/logo-boxify.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Header(props) {
   const navigate = useNavigate();
@@ -13,6 +14,19 @@ function Header(props) {
   function handleClick() {
     props.onClickCloseMenu();
   }
+
+  useEffect(() => {
+    // Comprobamos si hay un token en las cookies al cargar la página
+    const token = document.cookie.replace(
+      /(?:(?:^|.*;\s*)access_token\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+    if (token) {
+      props.setLogin(true); // Si hay token, el usuario está logueado
+    } else {
+      props.setLogin(false); // Si no hay token, el usuario no está logueado
+    }
+  }, []);
 
   function handleClickLogout() {
     fetch("http://localhost:5005/logout", {
@@ -27,8 +41,16 @@ function Header(props) {
       })
       .then((data) => {
         if (data.success) {
+          props.setLogin(false);
+          document.cookie = "token=; Max-Age=0";
+          props.setIslogin(true);
+          props.setModalAddBox(false);
+
           navigate("/");
         }
+      })
+      .catch((error) => {
+        console.error("Error cerrando sesión:", error);
       });
   }
 

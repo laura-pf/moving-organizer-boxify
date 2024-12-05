@@ -59,7 +59,7 @@ server.post("/register", async (req, res) => {
   const errors = []; //Array para acumular errores
 
   //validamos y aseguramos que name no sea muy corto
-  if (name.length < 3) {
+  if (name.trim().length < 3) {
     errors.push({
       field: "name",
       message: "el nombre debe tener al menos 3 caracteres",
@@ -71,7 +71,7 @@ server.post("/register", async (req, res) => {
   //validamos y nos aseguramos que user sea un string y no sea muy corto
   if (typeof user !== "string") {
     errors.push({ field: "user", message: "User debe ser un string" });
-  } else if (user.length < 3) {
+  } else if (user.trim().length < 3) {
     errors.push({
       field: "user",
       message: "El usuario debe tener al menos 3 caracteres",
@@ -149,6 +149,25 @@ server.post("/register", async (req, res) => {
       email,
       passwordHashed,
     ]);
+
+    // Generar el token JWT
+    const infoToken = {
+      email: email,
+      name: name,
+      id: newUserResult.insertId, // El ID del nuevo usuario
+    };
+
+    const token = jwt.sign(infoToken, process.env.DB_PASSWORD, {
+      expiresIn: "1h", // El token durará 1 hora
+    });
+
+    // Guardar el token en las cookies
+    res.cookie("access_token", token, {
+      httpOnly: true, // La cookie solo se puede acceder en el servidor
+      secure: false, // Usamos false en desarrollo (en producción debería ser true con HTTPS)
+      sameSite: "Lax", // Evita el envío de la cookie en solicitudes entre sitios
+      path: "/", // La cookie estará disponible para todo el dominio
+    });
 
     res.status(201).json({
       success: true,
@@ -262,6 +281,7 @@ server.post("/login", async (req, res) => {
             // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
             secure: false, //en desarrollo usamos false
             sameSite: "Lax",
+            path: "/",
           })
           .json({ success: true, user: userResult[0], token: token });
       } else {
@@ -565,6 +585,6 @@ server.delete("/delete-object", async (req, res) => {
 });
 
 server.post("/logout", (req, res) => {
-  res.clearCookie("access_token");
+  res.clearCookie("access_token", { path: "/" });
   res.json({ success: true, message: "sesión cerrada" });
 });

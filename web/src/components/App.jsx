@@ -41,6 +41,7 @@ function App() {
     if (!login) {
       return;
     }
+
     fetch(`http://localhost:5005/boxs`, {
       method: "GET",
       credentials: "include",
@@ -78,7 +79,9 @@ function App() {
 
   function handleClickAddBox() {
     const doesBoxExist = addedBox.some(
-      (box) => box.tittle.toLowerCase() === inputModalAddBox.toLocaleLowerCase()
+      (box) =>
+        box.tittle.toLowerCase().trim() ===
+        inputModalAddBox.toLocaleLowerCase().trim()
     );
 
     if (inputModalAddBox.trim() === "") {
@@ -337,8 +340,34 @@ function App() {
       }
       return box;
     });
-    setAddedBox(removedItem);
-    localStorage.clear();
+
+    const dataItemToSend = {
+      objectIndex: indexToRemove,
+      boxId: boxId,
+    };
+
+    fetch("http://localhost:5005/delete-object", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dataItemToSend),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.message || "Error al eliminar objetos");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setAddedBox(removedItem);
+          localStorage.clear();
+        }
+      })
+      .catch((error) => {
+        console.error("Error eliminando el recurso:", error);
+      });
   }
 
   //funcionalidad buscador por nombre de caja:
@@ -403,6 +432,9 @@ function App() {
         <Header
           toggleMenu={handleClickMenu}
           onClickCloseMenu={handleCloseMenu}
+          setLogin={setLogin}
+          setIslogin={setIslogin}
+          setModalAddBox={setModalAddBox}
         />
       )}
 
@@ -442,6 +474,8 @@ function App() {
               modalRemoveBox={modalRemoveBox}
               boxToRemove={boxToRemove}
               onClickLogoutMobile={handleClickLogoutMobile}
+              setModalAddBox={setModalAddBox}
+              setIslogin={setIslogin}
             />
           }
         />

@@ -22,6 +22,8 @@ function MobileMenuHeader(props) {
       })
       .then((data) => {
         if (data.success) {
+          props.setModalAddBox(false);
+          props.setIslogin(true);
           navigate("/");
         }
       });

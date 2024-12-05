@@ -272,6 +272,7 @@ function Login(props) {
                   onChange={handleChangeLogin}
                   value={loginForm.email}
                   required
+                  autoComplete="email"
                   className={errorLogin.email ? "input-error" : ""}
                 />
                 {errorLogin.email ? (
@@ -339,6 +340,7 @@ function Login(props) {
                   required
                   onChange={handleChangeRegister}
                   value={registerForm.name}
+                  autoComplete="name"
                   className={errorMessage.name ? "input-error" : ""}
                 />
                 {errorMessage.name ? (
@@ -360,6 +362,7 @@ function Login(props) {
                   name="email"
                   placeholder="ejemplo@correo.com"
                   required
+                  autoComplete="email"
                   onChange={(e) => {
                     handleChangeRegister(e);
                     handleChangeField("email", e.target.value);
@@ -386,6 +389,7 @@ function Login(props) {
                   name="user"
                   placeholder="Elige un nombre de usuario"
                   required
+                  autoComplete="user"
                   onChange={(e) => {
                     handleChangeRegister(e);
                     handleChangeField("user", e.target.value);

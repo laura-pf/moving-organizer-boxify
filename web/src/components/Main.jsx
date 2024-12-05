@@ -2,9 +2,6 @@ import "../scss/components/Main.scss";
 import IconAdd from "../images/icon+.png";
 import Filter from "./Filter";
 import ModalAddBox from "./ModalAddBox";
-import ChicaCaja from "../images/chica-caja.jpg";
-
-import { Link } from "react-router-dom";
 import BoxList from "./BoxList";
 import MobileMenuHeader from "./MobileMenuHeader";
 import ModalRemoveBox from "./ModalRemoveBox";
@@ -75,6 +72,8 @@ function Main(props) {
         <MobileMenuHeader
           onClickCloseMenu={props.onClickCloseMenu}
           onClickLogoutMobile={props.onClickLogoutMobile}
+          setModalAddBox={props.setModalAddBox}
+          setIslogin={props.setIslogin}
         />
       )}
     </main>
