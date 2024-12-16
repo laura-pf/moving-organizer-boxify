@@ -21,6 +21,7 @@
     "mysql2": "^3.11.3",
     "react-router-dom": "^6.28.0",
     "react-transition-group": "^4.4.5",
-    "safe-buffer": "^5.2.1"
+    "safe-buffer": "^5.2.1",
+    "swagger-ui-express": "^5.0.1"
   }
 }

@@ -1,0 +1,285 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Boxify API",
+    "description": "API para gestionar cajas y objetos.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5005",
+      "description": "Servidor de desarrollo"
+    },
+    {
+      "url": "https://boxify.onrender.com",
+      "description": "Servidor de producción"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "user": { "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["name", "user", "email", "password"]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["email", "password"]
+      },
+      "BoxRequest": {
+        "type": "object",
+        "properties": {
+          "tittle": { "type": "string" }
+        },
+        "required": ["tittle"]
+      },
+      "AddObjectsRequest": {
+        "type": "object",
+        "properties": {
+          "boxId": { "type": "integer" },
+          "objects": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["boxId", "objects"]
+      },
+      "DeleteObjectRequest": {
+        "type": "object",
+        "properties": {
+          "boxId": { "type": "integer" },
+          "objectIndex": { "type": "integer" }
+        },
+        "required": ["boxId", "objectIndex"]
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Token de autenticación faltante o inválido.",
+        "content": {
+          "application/json": {
+            "example": { "error": "Acceso denegado, token inválido." }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Registrar un usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuario registrado con éxito." },
+          "400": { "description": "Errores de validación." },
+          "500": { "description": "Error al registrar el usuario." }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "summary": "Verificar si el nombre de usuario ya existe.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Usuario disponible." },
+          "409": { "description": "El usuario ya está registrado." },
+          "500": { "description": "Error al verificar al usuario." }
+        }
+      }
+    },
+    "/email": {
+      "post": {
+        "summary": "Verificar si el email ya existe.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Email disponible." },
+          "409": { "description": "El email ya está registrado." },
+          "500": { "description": "Error al verificar el email." }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Inicio de sesión de usuario.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Usuario autenticado con éxito." },
+          "401": { "description": "Usuario no autenticado, contraseña incorrecta." },
+          "403": { "description": "Usuario no registrado." },
+          "500": { "description": "Error al iniciar sesión." }
+        }
+      }
+    },
+    "/profile-user": {
+      "get": {
+        "summary": "Obtener el perfil del usuario autenticado.",
+        "responses": {
+          "200": { "description": "Información del usuario autenticado." },
+          "401": { "description": "Autenticación fallida." }
+        }
+      }
+    },
+    "/boxs": {
+      "get": {
+        "summary": "Obtener todas las cajas del usuario autenticado.",
+        "responses": {
+          "200": { "description": "Lista de cajas del usuario." },
+          "500": { "description": "Error al obtener las cajas." }
+        }
+      }
+    },
+    "/add-box": {
+      "post": {
+        "summary": "Añadir una nueva caja.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoxRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Caja añadida con éxito." },
+          "400": { "description": "El título es obligatorio." },
+          "500": { "description": "Error al añadir caja." }
+        }
+      }
+    },
+    "/add-objects": {
+      "put": {
+        "summary": "Añadir objetos a una caja.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddObjectsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Objeto añadido con éxito." },
+          "400": { "description": "El objeto es obligatorio." },
+          "404": { "description": "Caja no encontrada." },
+          "500": { "description": "Error al añadir objetos." }
+        }
+      }
+    },
+    "/delete-box/{id}": {
+      "delete": {
+        "summary": "Eliminar una caja.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Caja eliminada con éxito." },
+          "500": { "description": "Error al eliminar la caja." }
+        }
+      }
+    },
+    "/delete-object": {
+      "delete": {
+        "summary": "Eliminar un objeto de una caja.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteObjectRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Objeto eliminado con éxito." },
+          "400": { "description": "Índice de objeto no válido." },
+          "404": { "description": "Caja no encontrada." },
+          "500": { "description": "Error al eliminar objeto, inténtalo de nuevo." }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Cerrar sesión",
+        "description": "Cierra la sesión del usuario eliminando la cookie que contiene el token de autenticación.",
+        "responses": {
+          "200": {
+            "description": "Sesión cerrada exitosamente.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Sesión cerrada"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error al cerrar sesión."
+          }
+        }
+      }
+    }
+  }
+}

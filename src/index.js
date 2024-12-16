@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { use } = require("bcrypt/promises");
 const cookieParser = require("cookie-parser");
+const swaggerConfig = require("./swagger.json");
+const swaggerUI = require("swagger-ui-express");
 //crear el servidor
 const server = express();
 
@@ -39,6 +41,8 @@ server.listen(port, () => {
   console.log(`Server is listening in http://localhost:${port}`);
 });
 
+//CONFIGURACION DE SWAGGER
+server.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerConfig));
 //ENDPOINTS
 
 //REGISTRO:
