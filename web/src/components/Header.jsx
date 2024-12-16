@@ -57,15 +57,7 @@ function Header(props) {
   return (
     <header className="header">
       <nav className="header__nav">
-        <Link onClick={handleClick} className="header__nav-link" to="/">
-          {" "}
-          <img
-            className="img-link"
-            src={LogoBox}
-            alt="imagen logo de caja"
-          />{" "}
-        </Link>
-
+        <img className="img-link" src={LogoBox} alt="imagen logo de caja" />{" "}
         <ul className="header__nav-list">
           <Link to="/info">
             <li className="nav-list-item">| Sobre la APP |</li>
@@ -77,7 +69,6 @@ function Header(props) {
             | Cerrar sesión |
           </li>
         </ul>
-
         <button className="menu-button" onClick={handleClickMenu}></button>
       </nav>
     </header>

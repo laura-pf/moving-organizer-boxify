@@ -91,12 +91,7 @@
     flex-direction: row;
     gap: 5px;
     flex-wrap: wrap;
-    justify-content: space-between;
-  }
-
-  @media screen and (min-width: 1024px) {
-    margin-left: 80px;
-    margin-right: 80px;
+    justify-content: space-around;
   }
 }
 

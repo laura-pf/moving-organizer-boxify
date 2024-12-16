@@ -30,10 +30,6 @@ function Filter(props) {
           onChange={handleChangeObject}
         />
       </div>
-
-      {/* <p className="label message">
-        No se encuentran resultados con el nombre: {props.inputFilterBox}
-      </p> */}
     </form>
   );
 }

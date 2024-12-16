@@ -28,8 +28,6 @@ function App() {
   const [boxToRemove, setBoxToRemove] = useState(null);
   const [login, setLogin] = useState(false);
 
-  // const [messageAddObject, setMessageAddObject] = useState("");
-
   //guardar en localStorage:
 
   useEffect(() => {
@@ -137,11 +135,6 @@ function App() {
       });
   }
 
-  // setAddedBox([...addedBox, newBox]);
-  // setInputModalAddBox("");
-  // setMesaggeAddBox("");
-  // setModalAddBox(false);
-
   //funcion aparece mensaje eliminar
   function handleQuestionRemoveBox(box) {
     setBoxToRemove(box);
@@ -152,7 +145,6 @@ function App() {
 
   function handleClickRemoveBox(id) {
     const removedBox = addedBox.filter((box) => box.id !== id);
-    console.log(removedBox);
 
     fetch(`http://localhost:5005/delete-box/${id}`, {
       method: "DELETE",
@@ -165,7 +157,6 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        console.log("Recurso eliminado con éxito:", data);
         setAddedBox(removedBox);
         setModalRemoveBox(false);
         setBoxToRemove(null);
@@ -380,11 +371,6 @@ function App() {
     setInputFilterObject(value);
   }
 
-  //filtrar por nombre de caja:
-  // const filteredBoxName = addedBox.filter((box) =>
-  //   box.tittle.toLowerCase().includes(inputFilterBox.toLowerCase())
-  // );
-
   //filtrar por nombre de la caja y por objeto dentro de la caja
 
   const filteredBoxName = addedBox
@@ -510,7 +496,6 @@ function App() {
               inputObject={inputAddObject}
               onChangeChecked={handleChecked}
               onClickRemoveItem={handleRemoveItem}
-              // objectFilter={filteredObject}
               mobileMenuHeader={mobileMenuHeader}
               onClickLogoutMobile={handleClickLogoutMobile}
             />

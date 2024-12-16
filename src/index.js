@@ -15,7 +15,6 @@ const server = express();
 server.use(express.json({ limit: "25mb" }));
 server.use(
   cors({
-    //No me funcionaba el cierre de sesion y añado:
     origin: "http://localhost:5173", // Especifica el origen permitido
     credentials: true, // Habilita las credenciales (cookies, auth headers, etc.)
   })
@@ -484,7 +483,6 @@ server.put("/add-objects", authorize, async (req, res) => {
       boxId,
     ]);
 
-    console.log("updateResult:", updateResult);
     res.status(200).json({
       success: true,
       message: "Objeto añadido con exito",
@@ -539,8 +537,6 @@ server.delete("/delete-object", async (req, res) => {
     //recuperamos los objetos que hay en la caja (req.user.id lo obtenemos de la funcion authorize, a que usuario logeado le pertenece la caja)
     const query = "SELECT objects FROM Box WHERE id = ?";
     const [boxResult] = await connection.query(query, [boxId]);
-
-    console.log(boxResult);
 
     if (boxResult.length === 0) {
       return res.status(404).json({

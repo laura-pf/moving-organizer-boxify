@@ -3,7 +3,8 @@
 .containbox {
   display: flex;
   flex-direction: column;
-  margin: 120px 20px;
+
+  margin: 120px 20px 10px 20px;
   background-image: url("../../images/cajas.jpg");
   background-repeat: no-repeat;
   background-size: contain;
@@ -24,15 +25,15 @@
       margin-top: 100px;
     }
     @media screen and (min-width: 1024px) {
-      margin-top: 300px;
       padding: 30px 0;
     }
   }
   &__back {
     border: 1px solid rgb(19, 188, 240);
     border-radius: 50px;
-    padding: 10px;
+    padding: 5px;
     font-family: $body;
+    font-size: 10px;
     color: rgb(19, 188, 240);
     font-weight: 700;
     align-self: center;
@@ -46,7 +47,15 @@
       background-color: $pastel-pink;
       border: 1px solid $color-tittle;
     }
+    @media screen and (min-width: 768px) {
+      font-size: 15px;
+      padding: 10px;
+    }
   }
+}
+
+.add-objects {
+  padding: 0 30px 0 30px;
 }
 
 .formAddObject {

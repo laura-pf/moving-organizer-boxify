@@ -25,13 +25,25 @@ function Box(props) {
   }
 
   return (
-    <div className="containbox">
-      <Link className="containbox__back" to="/main">
-        &lt; Volver
-      </Link>
+    <>
+      <div className="containbox">
+        <Link className="containbox__back" to="/main">
+          &lt; Volver
+        </Link>
 
-      <div>
-        <h1 className="containbox__tittle">{props.box.tittle}</h1>
+        <div>
+          <h1 className="containbox__tittle">{props.box.tittle}</h1>
+
+          {props.mobileMenuHeader && (
+            <MobileMenuHeader
+              onClickCloseMenu={handleClick}
+              onClickLogoutMobile={props.onClickLogoutMobile}
+            />
+          )}
+        </div>
+      </div>
+
+      <section className="add-objects">
         <form className="formAddObject">
           <label htmlFor="item" className="formAddObject__tittle">
             Guardar en la caja:
@@ -87,15 +99,8 @@ function Box(props) {
             </li>
           ))}
         </ul>
-
-        {props.mobileMenuHeader && (
-          <MobileMenuHeader
-            onClickCloseMenu={handleClick}
-            onClickLogoutMobile={props.onClickLogoutMobile}
-          />
-        )}
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
 

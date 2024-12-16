@@ -104,8 +104,6 @@ function Login(props) {
         if (!response.ok) {
           return response.json().then((errorData) => {
             const serverErrors = { email: "", password: "" };
-            console.log("response", response);
-            console.log(errorData);
 
             if (errorData.message.includes("email") && loginForm.email) {
               serverErrors.email = "El email no está registrado";
@@ -126,7 +124,6 @@ function Login(props) {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data.success) {
           props.setLogin(true);
           navigate("/main"); // Redirige al usuario
@@ -134,8 +131,6 @@ function Login(props) {
       })
       .catch((error) => {
         console.error("Error:", error.message);
-
-        console.log(document.cookie);
       });
   }
 
