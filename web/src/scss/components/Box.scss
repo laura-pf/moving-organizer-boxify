@@ -89,7 +89,7 @@
       font-size: 17px;
       cursor: pointer;
       &:hover:not(:active) {
-        background-color: #005ea6;
+        background-color: $color-tittle;
         transform: scale(1);
       }
       &:active {
@@ -99,11 +99,6 @@
       }
     }
   }
-}
-
-.formAddObject__inputButton-inputObject:focus {
-  border-color: $color-tittle;
-  outline: none;
 }
 
 .object-list {

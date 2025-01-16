@@ -22,20 +22,34 @@ server.use(
 require("dotenv").config(); // permitimos el uso de variables de entorno, instalar libreria
 server.use(cookieParser());
 
+//hacemos un pool para no tener limite de conexiones en freedb:
+const pool = mysql.createPool({
+  host: "sql.freedb.tech",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: "freedb_boxify",
+  waitForConnections: true,
+  connectionLimit: 5, // Máximo número de conexiones simultáneas
+  queueLimit: 0, // Sin límite de solicitudes en cola
+});
+
 //conexión a la bases de datos
 async function getDBConnection() {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: "Boxify",
-  });
-  connection.connect();
-  return connection;
+  return pool.getConnection();
 }
+// async function getDBConnection() {
+//   const connection = await mysql.createConnection({
+//     host: "sql.freedb.tech",
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: "freedb_boxify",
+//   });
+//   connection.connect();
+//   return connection;
+// }
 
 //iniciar el servidor desde un puerto
-const port = 5005;
+const port = process.env.PORT || 5005;
 server.listen(port, () => {
   console.log(`Server is listening in http://localhost:${port}`);
 });
@@ -113,7 +127,7 @@ server.post("/register", async (req, res) => {
 
   try {
     // Comprobar si el nombre de usuario ya existe
-    const userQuery = "SELECT * FROM users WHERE user= ?";
+    const userQuery = "SELECT * FROM Users WHERE user= ?";
     const [userExists] = await connection.query(userQuery, [user]);
 
     if (userExists.length > 0) {
@@ -124,7 +138,7 @@ server.post("/register", async (req, res) => {
     }
 
     // Comprobar si el email ya existe
-    const emailQuery = "SELECT * FROM users WHERE email = ?";
+    const emailQuery = "SELECT * FROM Users WHERE email = ?";
     const [emailExists] = await connection.query(emailQuery, [email]);
 
     if (emailExists.length > 0) {
@@ -145,7 +159,7 @@ server.post("/register", async (req, res) => {
 
     // Insertar en la base de datos
     const query =
-      "INSERT INTO users (name, user, email, password) VALUES (?, ?, ?, ?)";
+      "INSERT INTO Users (name, user, email, password) VALUES (?, ?, ?, ?)";
     const [newUserResult] = await connection.query(query, [
       name,
       user,
@@ -183,7 +197,7 @@ server.post("/register", async (req, res) => {
     });
   } finally {
     // Cerrar la conexión a la base de datos
-    connection.end();
+    connection.release();
   }
 });
 
@@ -195,7 +209,7 @@ server.post("/user", async (req, res) => {
   const connection = await getDBConnection();
 
   try {
-    const query = "SELECT * FROM users WHERE user = ?";
+    const query = "SELECT * FROM Users WHERE user = ?";
     const [results] = await connection.query(query, [user]);
 
     if (results.length > 0) {
@@ -209,7 +223,7 @@ server.post("/user", async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al verificar al usuario" });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -219,7 +233,7 @@ server.post("/email", async (req, res) => {
   const connection = await getDBConnection();
 
   try {
-    const query = "SELECT * FROM users WHERE email = ?";
+    const query = "SELECT * FROM Users WHERE email = ?";
     const [results] = await connection.query(query, [email]);
 
     if (results.length > 0) {
@@ -233,7 +247,7 @@ server.post("/email", async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error al verificar el email" });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -254,7 +268,7 @@ server.post("/login", async (req, res) => {
   const connection = await getDBConnection();
 
   try {
-    const emailQuery = "SELECT * FROM users WHERE email = ?";
+    const emailQuery = "SELECT * FROM Users WHERE email = ?";
     const [userResult] = await connection.query(emailQuery, [email]);
 
     //si el usuario con el email existe - compara la contraseña que ha puesto con la que hay en la bd
@@ -306,7 +320,7 @@ server.post("/login", async (req, res) => {
       message: "Error al iniciar sesión. Inténtalo de nuevo",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -332,7 +346,7 @@ async function authorize(req, res, next) {
   try {
     const tokenInfo = jwt.verify(token, process.env.DB_PASSWORD); // Verificamos el token con la clave
 
-    const query = "SELECT * FROM users WHERE email = ?";
+    const query = "SELECT * FROM Users WHERE email = ?";
     const [emailResult] = await connection.query(query, [tokenInfo.email]);
 
     if (emailResult.length === 0) {
@@ -354,7 +368,7 @@ async function authorize(req, res, next) {
       message: "Autenticación fallida",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 }
 
@@ -371,7 +385,7 @@ server.get("/boxs", authorize, async (req, res) => {
   const userId = req.user.id;
   const connection = await getDBConnection();
   try {
-    const sqlQuery = "SELECT * FROM box WHERE fk_user_id=?";
+    const sqlQuery = "SELECT * FROM Box WHERE fk_user_id=?";
     const [boxResult] = await connection.query(sqlQuery, [userId]);
 
     res.status(200).json({
@@ -385,7 +399,7 @@ server.get("/boxs", authorize, async (req, res) => {
     });
   } finally {
     if (connection) {
-      connection.end();
+      connection.release();
     }
   }
 });
@@ -439,7 +453,7 @@ server.post("/add-box", authorize, async (req, res) => {
       message: "Error al añadir caja. Inténtalo de nuevo",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -494,7 +508,7 @@ server.put("/add-objects", authorize, async (req, res) => {
       message: "Error al añadir objetos, intentalo de nuevo",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -522,7 +536,7 @@ server.delete("/delete-box/:id", authorize, async (req, res) => {
       message: "Caja no eliminada",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -580,7 +594,7 @@ server.delete("/delete-object", async (req, res) => {
       message: "Error al eliminar el objeto, inténtalo de nuevo",
     });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
