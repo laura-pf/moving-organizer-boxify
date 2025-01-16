@@ -29,7 +29,7 @@ function Header(props) {
   }, []);
 
   function handleClickLogout() {
-    fetch("http://localhost:5005/logout", {
+    fetch("https://boxify.onrender.com/logout", {
       method: "POST",
       credentials: "include", //envia las cookies en la solicitud
     })

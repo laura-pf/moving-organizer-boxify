@@ -40,7 +40,7 @@ function App() {
       return;
     }
 
-    fetch(`http://localhost:5005/boxs`, {
+    fetch(`https://boxify.onrender.com/boxs`, {
       method: "GET",
       credentials: "include",
     })
@@ -96,7 +96,7 @@ function App() {
       tittle: inputModalAddBox,
     };
 
-    fetch("http://localhost:5005/add-box", {
+    fetch("https://boxify.onrender.com/add-box", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(newBox),
@@ -146,7 +146,7 @@ function App() {
   function handleClickRemoveBox(id) {
     const removedBox = addedBox.filter((box) => box.id !== id);
 
-    fetch(`http://localhost:5005/delete-box/${id}`, {
+    fetch(`https://boxify.onrender.com/delete-box/${id}`, {
       method: "DELETE",
       credentials: "include",
     })
@@ -250,7 +250,7 @@ function App() {
       objects: [newObject],
     };
 
-    fetch("http://localhost:5005/add-objects", {
+    fetch("https://boxify.onrender.com/add-objects", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataToSend),
@@ -337,7 +337,7 @@ function App() {
       boxId: boxId,
     };
 
-    fetch("http://localhost:5005/delete-object", {
+    fetch("https://boxify.onrender.com/delete-object", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataItemToSend),
