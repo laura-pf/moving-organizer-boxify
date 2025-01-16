@@ -296,7 +296,7 @@ server.post("/login", async (req, res) => {
           .cookie("access_token", token, {
             httpOnly: true, // la cookie solo se puede acceder en el servidor
             // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
-            secure: false, //en desarrollo usamos false
+            secure: true, //en desarrollo usamos false, cambiamos a true para desplegar
             sameSite: "Lax",
             path: "/",
           })
