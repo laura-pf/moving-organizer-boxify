@@ -10,6 +10,7 @@ const swaggerConfig = require("./swagger.json");
 const swaggerUI = require("swagger-ui-express");
 //crear el servidor
 const server = express();
+const path = require("path");
 
 //configurar el servidor
 server.use(express.json({ limit: "25mb" }));
@@ -47,6 +48,15 @@ async function getDBConnection() {
 //   connection.connect();
 //   return connection;
 // }
+
+// Ruta para los archivos estáticos
+const staticServerPath = path.join(__dirname, "src", "public-react");
+app.use(express.static(staticServerPath));
+
+// Redirigir todas las demás rutas a index.html (para React Router)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(staticServerPath, "index.html"));
+});
 
 //iniciar el servidor desde un puerto
 const port = process.env.PORT || 5005;
