@@ -50,7 +50,7 @@ async function getDBConnection() {
 // }
 
 // Ruta para los archivos estáticos
-const staticServerPath = path.join(__dirname, "src", "public-react");
+const staticServerPath = "src/public-react";
 server.use(express.static(staticServerPath));
 
 // Redirigir todas las demás rutas a index.html (para React Router)
