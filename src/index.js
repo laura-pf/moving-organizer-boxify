@@ -49,7 +49,7 @@ async function getDBConnection() {
 // }
 
 //iniciar el servidor desde un puerto
-const port = process.env.PORT || 5005;
+const port = "http://localhost:5005";
 server.listen(port, () => {
   console.log(`Server is listening in http://localhost:${port}`);
 });
