@@ -38,25 +38,10 @@ const pool = mysql.createPool({
 async function getDBConnection() {
   return pool.getConnection();
 }
-// async function getDBConnection() {
-//   const connection = await mysql.createConnection({
-//     host: "sql.freedb.tech",
-//     user: process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
-//     database: "freedb_boxify",
-//   });
-//   connection.connect();
-//   return connection;
-// }
 
 // Ruta para los archivos estáticos
 const staticServerPath = "src/public-react";
 server.use(express.static(staticServerPath));
-
-// Redirigir todas las demás rutas a index.html (para React Router)
-// server.get("*", (req, res) => {
-//   res.sendFile(path.join(staticServerPath, "index.html"));
-// });
 
 //iniciar el servidor desde un puerto
 const port = process.env.PORT || 5005;
@@ -184,7 +169,7 @@ server.post("/register", async (req, res) => {
       id: newUserResult.insertId, // El ID del nuevo usuario
     };
 
-    const token = jwt.sign(infoToken, process.env.DB_PASSWORD, {
+    const token = jwt.sign(infoToken, process.env.DB_TOKEN, {
       expiresIn: "1h", // El token durará 1 hora
     });
 
@@ -297,7 +282,7 @@ server.post("/login", async (req, res) => {
           id: userResult[0].id,
         };
         //generar token
-        const token = jwt.sign(infoToken, process.env.DB_PASSWORD, {
+        const token = jwt.sign(infoToken, process.env.DB_TOKEN, {
           expiresIn: "1h",
         });
 
@@ -305,7 +290,6 @@ server.post("/login", async (req, res) => {
         return res
           .cookie("access_token", token, {
             httpOnly: true, // la cookie solo se puede acceder en el servidor
-            // secure: process.env.NODE_ENV === "production", // para que siempre funcione con https
             secure: true, //en desarrollo usamos false, cambiamos a true para desplegar
             sameSite: "Lax",
             path: "/",
@@ -354,7 +338,7 @@ async function authorize(req, res, next) {
   const connection = await getDBConnection();
 
   try {
-    const tokenInfo = jwt.verify(token, process.env.DB_PASSWORD); // Verificamos el token con la clave
+    const tokenInfo = jwt.verify(token, process.env.DB_TOKEN); // Verificamos el token con la clave
 
     const query = "SELECT * FROM Users WHERE email = ?";
     const [emailResult] = await connection.query(query, [tokenInfo.email]);
