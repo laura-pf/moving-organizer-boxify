@@ -191,7 +191,7 @@ server.post("/register", async (req, res) => {
     // Guardar el token en las cookies
     res.cookie("access_token", token, {
       httpOnly: true, // La cookie solo se puede acceder en el servidor
-      secure: false, // Usamos false en desarrollo (en producción debería ser true con HTTPS)
+      secure: true, // Usamos false en desarrollo (en producción debería ser true con HTTPS)
       sameSite: "Lax", // Evita el envío de la cookie en solicitudes entre sitios
       path: "/", // La cookie estará disponible para todo el dominio
     });

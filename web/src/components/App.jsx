@@ -40,7 +40,7 @@ function App() {
       return;
     }
 
-    fetch(`https://boxify.onrender.com/boxs`, {
+    fetch("https://boxify.onrender.com/boxs", {
       method: "GET",
       credentials: "include",
     })
