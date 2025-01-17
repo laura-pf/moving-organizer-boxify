@@ -16,7 +16,7 @@ const path = require("path");
 server.use(express.json({ limit: "25mb" }));
 server.use(
   cors({
-    origin: "https://boxify.onrender.com/#/main", // Especifica el origen permitido
+    origin: "https://boxify.onrender.com", // Especifica el origen permitido
     credentials: true, // Habilita las credenciales (cookies, auth headers, etc.)
   })
 );
@@ -54,9 +54,9 @@ const staticServerPath = "src/public-react";
 server.use(express.static(staticServerPath));
 
 // Redirigir todas las demás rutas a index.html (para React Router)
-server.get("*", (req, res) => {
-  res.sendFile(path.join(staticServerPath, "index.html"));
-});
+// server.get("*", (req, res) => {
+//   res.sendFile(path.join(staticServerPath, "index.html"));
+// });
 
 //iniciar el servidor desde un puerto
 const port = process.env.PORT || 5005;
