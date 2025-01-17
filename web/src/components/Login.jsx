@@ -94,7 +94,7 @@ function Login(props) {
 
     setErrorLogin(errors);
 
-    fetch("http://localhost:5005/login", {
+    fetch("https://boxify.onrender.com/login", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify(loginForm),
@@ -181,7 +181,7 @@ function Login(props) {
     if (!value) return; //no hacer nada si el campo esta vacio (no hace peticiones al servidor)
 
     //queremos verificar antes de mandar el formulario a la bd, que el usuario y el email no existan:
-    fetch(`http://localhost:5005/${field}`, {
+    fetch(`https://boxify.onrender.com/${field}`, {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ [field]: value }),
