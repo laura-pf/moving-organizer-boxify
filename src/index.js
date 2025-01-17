@@ -16,7 +16,7 @@ const path = require("path");
 server.use(express.json({ limit: "25mb" }));
 server.use(
   cors({
-    origin: "https://boxify.onrender.com", // Especifica el origen permitido
+    origin: "https://boxify.onrender.com/#/main", // Especifica el origen permitido
     credentials: true, // Habilita las credenciales (cookies, auth headers, etc.)
   })
 );
